@@ -1,11 +1,11 @@
 # PMT
 This is the code for our paper [Learning to Compute Products of Polynomials with Transformers](https://scml.risc.jku.at/proceedings/), which has been accepted by SCML.
 # File organization
-See details in `Organization.md`
+See details in [Organization.md](https://github.com/yxsongfred/PMT/blob/main/Organization.md)
 # Requirements
-See details in `requirements.txt`
+See details in [requirements.txt](https://github.com/yxsongfred/PMT/blob/main/requirements.txt)
 # Usage
-To run the code, you can refer to example scripts in `run.sh`
+To run the code, you can refer to example scripts in [run.sh](https://github.com/yxsongfred/PMT/blob/main/Organization.md)
 # Citation
 If you find this work helpful or want to use our codes, please cite our paper:
 ```
