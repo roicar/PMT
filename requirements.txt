@@ -1,0 +1,5 @@
+numpy==2.4.6
+torch==2.9.0+cu130
+torch_geometric==2.8.0
+torch_optimizer==0.3.0
+transformers==5.6.1
