@@ -21,3 +21,5 @@ Batched scripts ready for running
 Evaluate Scheme 3 (Collect-to-Accum) on 100 samples per dataset for Table 6 comparison
 ## requirements.txt
 Required python libraries
+# File organization of `unsigned`
+See `README.md` in corresponding directories 
