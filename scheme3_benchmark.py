@@ -11,6 +11,8 @@
         python scheme3_benchmark.py --dataset v2d2C1
         python scheme3_benchmark.py --dataset v2t2E1C1
         python scheme3_benchmark.py --dataset v3t3E1C1
+    Coded and annotated by Bin WANG
+    Last modified time: 5 Nov 2026
 '''
 import sys, os, time, json, torch
 import warnings

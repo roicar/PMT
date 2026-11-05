@@ -27,24 +27,10 @@ python run.py --dataset v1d15C1 --batch_size 64 --valid --log --collect --sum --
 python run.py --task prem --dataset v1d3C1 --batch_size 256 --valid --log
 ## Finetune multiplication model (dataset: [v1d3C1, v1d7C1, v3t3E1C1L3], size: 100,000)
 python run.py --task prem --dataset v1d3C1 --batch_size 256 --valid --log --finetune --no_freeze # `--no_freeze` indicating not freezing decoder layers in multiplication model
-## 1-step Scratchpad (dataset: [v1d3C1, v1d7C1, _v1D3C1L3, _v1D7C1L3, v2t2E1C1L3], size: 100,000)
-python run.py --task prem --dataset _v1D3C1L3 --batch_size 256 --valid --log --prem_step 1
-## N-step Scratchpad (dataset: [_v1D3C1L3, _v1D7C1L3, v2t2E1C1L3], size: 100,000)
-python run.py --task prem --dataset _v1D7C1L3 --batch_size 256 --valid --log --prem_step N
-## Detailed Scratchpad (dataset: [v1d7C1, _v1D3C1L3, _v1D7C1L3, v2t2E1C1L3], size: 100,000)
-python run.py --task prem --dataset v2t2E1C1L3 --batch_size 256 --valid --log --prem_step N --detailed_spa
-## Finetune model trained from integer-coefficient prem (dataset: [v2t2E1F7, v3t3E1F7], size: 100,000)
-python run.py --task prem --dataset v3t3E1F7 --batch_size 256 --valid --log --finetune --no_freeze
 ### Characteristic set
-## Directly learn characteristic set (dataset: [v2t2e2C1L3, v3t3e2C1L3, v2t2e2F7], size: 100,000)
+## Directly learn characteristic set (dataset: [v2t2e2C1L3, v3t3e2C1L3], size: 100,000)
 python run.py --task charset --dataset v2t2e2C1L3 --batch_size 256 --valid --log
-## Directly learn characteristic set (dataset: [v3t3e2C1L3, v2t2e4F7], size: 100,000)
-SEQ_LEN=1024 python run.py --task charset --dataset v2t2e4F7 --batch_size 256 --valid --log
-## Directly learn characteristic set (dataset: v3t3e2F7, size: 100,000)
-SEQ_LEN=1280 python run.py --task charset --dataset v3t3e2F7 --batch_size 256 --valid --log
-## Finetune prem model (dataset: [v3t3e2C1L3, v2t2e2F7], size: 100,000)
-SEQ_LEN=1024 python run.py --task charset --dataset v2t2e2F7 --batch_size 256 --valid --log --finetune --no_freeze
-## Finetune prem model (dataset: v3t3e2F7, size: 100,000)
-SEQ_LEN=1280 python run.py --task charset --dataset v3t3e2F7 --batch_size 256 --valid --log --finetune --no_freeze
-## Finetune prem model (dataset: v3t3E1F7S2, size: 40,000)
-SEQ_LEN=1920 python run.py --task charset --dataset_size 40000 --batch_size 64 --dataset v3t3E1F7S2 --valid --log --finetune --no_freeze
+## Directly learn characteristic set (dataset: v3t3e2C1L3, size: 100,000)
+SEQ_LEN=1024 python run.py --task charset --dataset v3t3e2C1L3 --batch_size 256 --valid --log
+## Finetune prem model (dataset: v3t3e2C1L3, size: 100,000)
+SEQ_LEN=1024 python run.py --task charset --dataset v3t3e2C1L3 --batch_size 256 --valid --log --finetune --no_freeze

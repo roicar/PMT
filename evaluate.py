@@ -2,6 +2,8 @@
     Evaluate extracted LLM predictions using project metrics.
     Usage: python evaluate.py [dataset_name]
     Default: v1d1C1
+    Coded and annotated by Bin WANG
+    Last modified time: 5 Nov 2026
 '''
 import json
 import sys

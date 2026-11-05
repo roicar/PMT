@@ -4,6 +4,8 @@ Usage:
     python preview_tokenized.py --dataset v3d2C1 --n 3
     python preview_tokenized.py --dataset v1d1C1 --n 1 --subtask collect
     python preview_tokenized.py --dataset v3t3E1C1 --n 2
+    Coded and annotated by Bin WANG
+    Last modified time: 5 Nov 2026
 """
 import argparse, sys, os
 sys.path.insert(0, os.path.dirname(__file__))

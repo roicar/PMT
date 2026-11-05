@@ -1,3 +1,8 @@
+'''
+    Conduct polynomial multiplication by calling Qwen 3.5 4B locally deployed with deep think module
+    Coded and annotated by Yuxuan SONG, Bin WANG
+    Last modified time: 5 Nov 2026
+'''
 import json
 import os
 import time
@@ -20,9 +25,9 @@ OUTPUT_JSONL = f"{DATASET_NAME}_qwen_deepthink_out.jsonl"
 LOG_FILE = f"{DATASET_NAME}_qwen_deepthink.log"
 PT_FILE_PATH = f"../dataset/mul/{DATASET_NAME}/"
 
-# ===================== 1. 自动生成输入文件 =====================
+# ===================== 1. Input file processing =====================
 if not os.path.exists(INPUT_JSONL):
-    print(f"📄 生成 {INPUT_JSONL} (最后 {NUM} 条)...\n")
+    print(f"Generating {INPUT_JSONL} (last {NUM} lines)...\n")
     with open(INPUT_JSONL, "w", encoding="utf-8") as f:
         for idx in range(START_ID, TOTAL_COUNT):
             pt_path = os.path.join(PT_FILE_PATH, f"{idx}.pt")
@@ -30,9 +35,9 @@ if not os.path.exists(INPUT_JSONL):
             prompt = f"Please compute the product: ({d.system[0]})*({d.system[1]}) and provide the result at the end"
             json_line = {"id": idx, "prompt": prompt, "label": d.product}
             f.write(json.dumps(json_line, ensure_ascii=False) + "\n")
-    print(f"✅ {INPUT_JSONL} 生成完成！\n")
+    print(f"{INPUT_JSONL} Finish!\n")
 
-# ===================== 2. Tokenizer + 模型 完全原版不动 =====================
+# ===================== 2. Tokenizer + LLM loading =====================
 tokenizer = AutoTokenizer.from_pretrained(
     MODEL_CACHE_DIR,
     trust_remote_code=True,
@@ -48,10 +53,9 @@ model = AutoModelForCausalLM.from_pretrained(
     device_map="auto"
 ).eval()
 
-# ===================== 3. 推理函数【恢复默认：允许深度思考，无任何限制】 =====================
+# ===================== 3. Inference function =====================
 def infer(prompt):
     try:
-        # 🔥 完全恢复你最初的原始格式，无系统提示、无任何限制
         messages = [{"role": "user", "content": prompt}]
         input_text = tokenizer.apply_chat_template(
             messages,
@@ -69,15 +73,15 @@ def infer(prompt):
                 eos_token_id=tokenizer.eos_token_id,
             )
 
-        # 完整输出模型生成内容（包含思考过程+答案）
+        # Full output (including thinking process and answer)
         res = tokenizer.decode(outputs[0][inputs.input_ids.shape[1]:], skip_special_tokens=True)
         res = res.strip()
         return res
     except:
         return ""
 
-# ===================== 4. 推理+可视化+保存 =====================
-print("🚀 开始推理（默认模式：允许深度思考）:\n")
+# ===================== 4. Inference =====================
+print("Qwen-3.5-4B inferences with deep think module\n")
 total_start = time.time()
 times = []
 
@@ -101,10 +105,10 @@ with open(INPUT_JSONL, "r", encoding="utf-8") as f_in, \
         times.append(elapsed)
 
         print("=" * 80)
-        print(f"第 {index} 条 | ID: {data['id']} | {elapsed:.2f}s")
+        print(f"{index} | ID: {data['id']} | {elapsed:.2f}s")
         print(f"Prompt: {data['prompt']}")
-        print(f"标准答案: {data['label']}")
-        print(f"Qwen输出: {qwen_output}")
+        print(f"Answer: {data['label']}")
+        print(f"Qwen output: {qwen_output}")
         print("=" * 80 + "\n")
 
         f_out.write(json.dumps(data, ensure_ascii=False) + "\n")
@@ -112,14 +116,8 @@ with open(INPUT_JSONL, "r", encoding="utf-8") as f_in, \
     total_elapsed = time.time() - total_start
     avg = total_elapsed / max(len(times), 1)
     f_log.write("=" * 60 + "\n")
-    f_log.write(f"Total: {total_elapsed:.2f}s | Avg: {avg:.2f}s/sample\n")
+    f_log.write(f"Total elapsed time: {total_elapsed:.2f}s | Avg: {avg:.2f}s\n")
 
-print(f"🎉 完成：默认模式运行，允许深度思考，完整输出内容")
-print(f"⏱  总耗时: {total_elapsed:.2f}s | 平均: {avg:.2f}s/条")
-print(f"📝 耗时日志: {LOG_FILE}")
-
-# Postprocessing:
-# Truncate LLM's outputs (drop illegal characters, 3x -> 3*x)
-# data['qwen'], data['label']
-# from data_utils.poly import metrics
-# MA, CA
+print(f"Finish: Qwen-3.5-4B deep think module")
+print(f"Total elapsed time: {total_elapsed:.2f}s | Avg: {avg:.2f}s")
+print(f"Logging file: {LOG_FILE}")

@@ -1,3 +1,8 @@
+'''
+    Conduct polynomial multiplication by calling Qwen 3.5 4B locally deployed with no think module
+    Coded and annotated by Yuxuan SONG, Bin WANG
+    Last modified time: 5 Nov 2026
+'''
 import json
 import os
 import time
@@ -9,7 +14,6 @@ import warnings
 warnings.filterwarnings("ignore")
 os.environ["TRANSFORMERS_VERBOSITY"] = "error"
 
-# ===================== 核心配置（完全你的原版） =====================
 DATASET_NAME = "v3t3E1C1"
 NUM = 100
 TOTAL_COUNT = 100000
@@ -21,9 +25,9 @@ OUTPUT_JSONL = f"{DATASET_NAME}_qwen_nothink_out.jsonl"
 LOG_FILE = f"{DATASET_NAME}_qwen_nothink.log"
 PT_FILE_PATH = f"../dataset/mul/{DATASET_NAME}/"
 
-# ===================== 1. 自动生成输入文件 =====================
+# ===================== 1. Input file processing =====================
 if not os.path.exists(INPUT_JSONL):
-    print(f"📄 生成 {INPUT_JSONL} (最后 {NUM} 条)...\n")
+    print(f"Generating {INPUT_JSONL} (last {NUM} lines)...\n")
     with open(INPUT_JSONL, "w", encoding="utf-8") as f:
         for idx in range(START_ID, TOTAL_COUNT):
             pt_path = os.path.join(PT_FILE_PATH, f"{idx}.pt")
@@ -31,9 +35,9 @@ if not os.path.exists(INPUT_JSONL):
             prompt = f"Please directly yield the final polynomial product without thinking:({d.system[0]})*({d.system[1]})"
             json_line = {"id": idx, "prompt": prompt, "label": d.product}
             f.write(json.dumps(json_line, ensure_ascii=False) + "\n")
-    print(f"✅ {INPUT_JSONL} 生成完成！\n")
+    print(f"{INPUT_JSONL} Finish!\n")
 
-# ===================== 2. Tokenizer + 模型 完全原版不动 =====================
+# ===================== 2. Tokenizer + LLM loading =====================
 tokenizer = AutoTokenizer.from_pretrained(
     MODEL_CACHE_DIR,
     trust_remote_code=True,
@@ -49,13 +53,13 @@ model = AutoModelForCausalLM.from_pretrained(
     device_map="auto"
 ).eval()
 
-# ===================== 3. 推理函数（禁用思考，直出答案） =====================
+# ===================== 3. Inference function =====================
 def infer(prompt):
     try:
         messages = [
             {"role": "user", "content": prompt},
         ]
-        # Qwen3.x: enable_thinking=False 跳过思考链，直接输出答案
+        # Qwen3.x: enable_thinking=False skips chain-of-thought
         input_text = tokenizer.apply_chat_template(
             messages,
             tokenize=False,
@@ -79,8 +83,8 @@ def infer(prompt):
     except:
         return ""
 
-# ===================== 4. 推理+可视化+保存 =====================
-print("🚀 开始推理（底层禁用思考，原生直出答案）:\n")
+# ===================== 4. Inference =====================
+print("Qwen-3.5-4B inferences with no think module\n")
 total_start = time.time()
 times = []
 
@@ -104,10 +108,10 @@ with open(INPUT_JSONL, "r", encoding="utf-8") as f_in, \
         times.append(elapsed)
 
         print("=" * 80)
-        print(f"第 {index} 条 | ID: {data['id']} | {elapsed:.2f}s")
+        print(f"{index} | ID: {data['id']} | {elapsed:.2f}s")
         print(f"Prompt: {data['prompt']}")
-        print(f"标准答案: {data['label']}")
-        print(f"Qwen输出: {qwen_output}")
+        print(f"Anser: {data['label']}")
+        print(f"Qwen output: {qwen_output}")
         print("=" * 80 + "\n")
 
         f_out.write(json.dumps(data, ensure_ascii=False) + "\n")
@@ -117,6 +121,6 @@ with open(INPUT_JSONL, "r", encoding="utf-8") as f_in, \
     f_log.write("=" * 60 + "\n")
     f_log.write(f"Total: {total_elapsed:.2f}s | Avg: {avg:.2f}s/sample\n")
 
-print(f"🎉 完成：禁用思考模式，纯公式答案")
-print(f"⏱  总耗时: {total_elapsed:.2f}s | 平均: {avg:.2f}s/条")
-print(f"📝 耗时日志: {LOG_FILE}")
+print(f"Finish: Qwen-3.5-4B no think module")
+print(f"Total elapsed time: {total_elapsed:.2f}s | Avg: {avg:.2f}s")
+print(f"Logging file: {LOG_FILE}")
